@@ -51,18 +51,19 @@ require 'xmlsimple'
 # Flickr client class. Requires an API key, and optionally takes an email and password for authentication
 class Flickr
 
-  attr_accessor :user
+  attr_accessor :user, :api_key
 
   # Replace this API key with your own (see http://www.flickr.com/services/api/misc.api_keys.html)
   def initialize(api_key='86e18ef2a064ff2255845e029208d7f4', email=nil, password=nil)
     @api_key = api_key
-    @host = 'http://flickr.com'
+    @host = 'http://api.flickr.com'
     @api = '/services/rest'
     login(email, password) if email and password
   end
 
   # Takes a Flickr API method name and set of parameters; returns an XmlSimple object with the response
   def request(method, *params)
+    p request_url(method, params)
     response = XmlSimple.xml_in(http_get(request_url(method, params)), { 'ForceArray' => false })
     raise response['err']['msg'] if response['stat'] != 'ok'
     response
@@ -166,7 +167,7 @@ class Flickr
       @username = username
       @email = email
       @password = password
-      @client = Flickr.new
+      @client = $client || Flickr.new
       @client.login(email, password) if email and password
     end
 
@@ -266,9 +267,12 @@ class Flickr
 
     attr_reader :id, :client
 
-    def initialize(id=nil)
+    def initialize(id=nil, client=nil)
       @id = id
-      @client = Flickr.new
+      @client = client 
+      if client == nil then
+        @client = Flickr.new
+      end
     end
     
     def title
