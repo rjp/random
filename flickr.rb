@@ -63,7 +63,6 @@ class Flickr
 
   # Takes a Flickr API method name and set of parameters; returns an XmlSimple object with the response
   def request(method, *params)
-    p request_url(method, params)
     response = XmlSimple.xml_in(http_get(request_url(method, params)), { 'ForceArray' => false })
     raise response['err']['msg'] if response['stat'] != 'ok'
     response
