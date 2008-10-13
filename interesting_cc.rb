@@ -6,6 +6,7 @@ allowed = {}
 
 config = YAML.load_file("#{ENV['HOME']}/.flickr")
 flickr = Flickr.new(api_key = config['api_key'])
+$client = flickr
 
 found = []
 today = Time.now
@@ -14,4 +15,5 @@ today = Time.now
     f = flickr.interestingness_getList('extras'=>'license', 'date'=>date);
     found.push f['photos']['photo'].find_all {|x| allowed[x['license'].to_i]}
 }
-p found.size
+use = found.flatten.sort_by {rand(Time.now)} [2] # third
+puts Flickr::Photo.new(use['id'], flickr).url
