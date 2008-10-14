@@ -16,4 +16,6 @@ today = Time.now
     found.push f['photos']['photo'].find_all {|x| allowed[x['license'].to_i]}
 }
 use = found.flatten.sort_by {rand(Time.now)} [2] # third
+p use
 puts Flickr::Photo.new(use['id'], flickr).url
+puts "http://flickr.com/photos/#{use['owner']}/#{use['id']}"
