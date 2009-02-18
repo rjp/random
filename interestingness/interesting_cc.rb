@@ -1,4 +1,4 @@
-require 'flickr'
+require 'flickraw'
 require 'yaml'
 
 allowed = {}
@@ -12,10 +12,11 @@ found = []
 today = Time.now
 1.upto(7) { |ago|
     date = (today - 86400*ago).strftime('%Y-%m-%d')
-    f = flickr.interestingness_getList('extras'=>'license', 'date'=>date);
-    found.push f['photos']['photo'].find_all {|x| allowed[x['license'].to_i]}
+    f = flickr.interestingness.getList :extras => 'license', :date => date
+    found.push f.find_all {|x| allowed[x.license.to_i]}
 }
 use = found.flatten.sort_by {rand(Time.now)} [2] # third
 p use
-puts Flickr::Photo.new(use['id'], flickr).url
-puts "http://flickr.com/photos/#{use['owner']}/#{use['id']}"
+photo = flickr.photos.getSizes(:photo_id => use.id)
+original = photo.find { |s| s.label == 'Original' }
+puts original
