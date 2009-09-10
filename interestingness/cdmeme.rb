@@ -5,12 +5,48 @@ require 'yaml'
 require 'haml'
 require 'open-uri'
 require 'hpricot'
+require 'dbi'
+require 'digest'
 
 set :port, 4569
+
+before do
+    @dbh = DBI.connect('DBI:sqlite3:/home/rjp/.cdmeme.db', '', '')
+end
 
 get '/' do
     @title = 'CDMeme parts'
     @cdmeme = get_cdmeme_parts()
+    parts = [
+        @cdmeme[:flickr][:id], @cdmeme[:wiki][:title],
+        @cdmeme[:wiki][:link], @cdmeme[:quote]
+    ]
+    hash = Digest::SHA1.hexdigest(parts.join('.x!|!x.'))[0..11]
+    @dbh.do(
+        "insert into cdmeme_base
+         (hash, flickr_id, wiki_title, wiki_link, quote_words)
+         values (?,?,?,?,?)",
+        hash,
+        @cdmeme[:flickr][:id], @cdmeme[:wiki][:title],
+        @cdmeme[:wiki][:link], @cdmeme[:quote]
+    )
+    @cdmeme[:hash] = hash
+    haml :index
+end
+
+get %r{/h/([0-9a-fA-F]+)} do |hash|
+    cdmeme = @dbh.select_one(
+	        "select flickr_id, wiki_title, wiki_link, quote_words
+            from cdmeme_base where hash=?",
+	        hash
+    )
+    @title = "CDMeme ##{hash}"
+    $stderr.puts cdmeme.inspect
+    @cdmeme = {
+        :flickr => get_flickr_info(cdmeme[0]),
+        :wiki => { :title => cdmeme[1], :link => cdmeme[2] },
+        :quote => cdmeme[3]
+    }
     haml :index
 end
 
