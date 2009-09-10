@@ -95,7 +95,17 @@ def get_flickr
 end
 
 def get_wikipedia
-    a = Hpricot(open("http://en.wikipedia.org/wiki/Special:Random"))
+    a = nil
+    1.upto(5) do
+        a = Hpricot(open("http://en.wikipedia.org/wiki/Special:Random"))
+        if a.at("a[@href*='Living_people']").nil? then
+            break
+        end
+        sleep 1
+    end
+    if a.nil? then
+        return { :link => '/', :title => 'WikiFail' }
+    end
     link = (a.at('div.printfooter')/:a)[0]['href']
     title = (a/:title).inner_html.gsub(/ - .*$/,'')
     return { :link => link, :title => title }
