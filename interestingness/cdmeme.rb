@@ -14,7 +14,7 @@ get '/' do
     haml :index
 end
 
-def get_flickr
+def get_flickr_photo
 	allowed = {}
 	[1,2,4,5,7].each {|l| allowed[l] = 1}
 	
@@ -25,25 +25,37 @@ def get_flickr
 	today = Time.now
 	1.upto(7) { |ago|
 	    date = (today - 86400*ago).strftime('%Y-%m-%d')
-	    f = flickr.interestingness.getList :extras => 'license', :date => date
-	    found.push f.find_all {|x| allowed[x.license.to_i]}
+        begin
+		    f = flickr.interestingness.getList :extras => 'license', :date => date
+		    found.push f.find_all {|x| allowed[x.license.to_i]}
+        rescue => e
+            ignore_the_exception = 1
+        end
 	}
-	use = found.flatten.sort_by {rand(Time.now)} [2] # third
+	return found.flatten.sort_by {rand(Time.now)} [2] # third
+end
 
-	info = flickr.photos.getInfo(:photo_id => use.id)
+def get_flickr_info(id)
+	info = flickr.photos.getInfo(:photo_id => id)
     page_url = info.urls.find {|x| x.type == 'photopage' }._content
     user = info.owner.username
     title = info.title
 
-	sizes = flickr.photos.getSizes(:photo_id => use.id)
+	sizes = flickr.photos.getSizes(:photo_id => id)
     $stderr.puts sizes.inspect
 
     thumbnail = sizes.find {|x| x.label == 'Medium'}.source
 
 	return { 
         :page => page_url, :thumb => thumbnail,
-        :title => title, :user => user
+        :title => title, :user => user,
+        :id => id
     }
+end
+
+def get_flickr
+    photo = get_flickr_photo()
+    return get_flickr_info(photo.id)
 end
 
 def get_wikipedia
