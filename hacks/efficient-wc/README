@@ -1,0 +1,9 @@
+Efficiently keep track of the number of lines in a file over a long period,
+rather than running "wc -l" every N minutes.
+
+On startup, we count the number of lines in the file, then we keep a rolling
+count with "tail -f".  On a signal, we write the number of lines into our
+output file and continue.
+
+Implemented using Perl's File::Tail which supplies most of the mechanics
+we need in one handy package.
