@@ -163,10 +163,6 @@ html>body #content {
 #footer .right {
 	float: right;
 }
-.clean {
-    border: 1px solid black;
-}
-
 table.clean {
     border-width: 0px 0px 0px 0px;
     border-spacing: 0px;
