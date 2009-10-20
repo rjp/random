@@ -2,7 +2,7 @@
 layout: post
 title: Results of string->int conversions
 ---
-For each of the strings representing an integer, convert it to an integer and add 1.
+With "each script":http://github.com/rjp/random/tree/master/string_to_int convert each of the strings representing an integer into an integer and add 1 before printing the result.
 
 table(clean).
 |_.string|_.expected|_.test.rb|_.test.pl|_.test.lua|_.test.c|_.test.py|_.testb0.rb|_.testb0.py|
