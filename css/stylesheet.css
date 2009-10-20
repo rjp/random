@@ -163,4 +163,31 @@ html>body #content {
 #footer .right {
 	float: right;
 }
+.clean {
+    border: 1px solid black;
+}
 
+table.clean {
+    border-width: 0px 0px 0px 0px;
+    border-spacing: 0px;
+    border-style: dashed dashed dashed dashed;
+    border-color: gray gray gray gray;
+    border-collapse: collapse;
+    background-color: white;
+}
+table.clean th {
+    border-width: 0px 0px 1px 0px;
+    padding: 3px 3px 3px 3px;
+    border-style: dashed dashed dashed dashed;
+    border-color: gray gray gray gray;
+    background-color: white;
+    -moz-border-radius: 0px 0px 0px 0px;
+}
+table.clean td {
+    border-width: 0px 0px 0px 0px;
+    padding: 3px 3px 3px 3px;
+    border-style: dashed dashed dashed dashed;
+    border-color: gray gray gray gray;
+    background-color: white;
+    -moz-border-radius: 0px 0px 0px 0px;
+}
