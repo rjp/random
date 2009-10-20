@@ -173,7 +173,7 @@ table.clean {
 }
 table.clean th {
     border-width: 0px 0px 1px 0px;
-    padding: 3px 3px 3px 3px;
+    padding: 5px 5px 5px 5px;
     border-style: dashed dashed dashed dashed;
     border-color: gray gray gray gray;
     background-color: white;
@@ -181,7 +181,7 @@ table.clean th {
 }
 table.clean td {
     border-width: 0px 0px 0px 0px;
-    padding: 3px 3px 3px 3px;
+    padding: 5px 5px 5px 5px;
     border-style: dashed dashed dashed dashed;
     border-color: gray gray gray gray;
     background-color: white;
