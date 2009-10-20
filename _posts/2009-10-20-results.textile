@@ -5,7 +5,7 @@ title: Results of string->int conversions
 For each of the strings representing an integer, convert it to an integer and add 1.
 
 table(clean).
-|_string|_expected|_test.rb|_test.pl|_test.lua|_test.c|_test.py|_testb0.rb|_testb0.py|
+|_ string|_ expected|_test.rb|_test.pl|_test.lua|_test.c|_test.py|_testb0.rb|_testb0.py|
 |2|3|3|3|3|3|3|3|3|
 |1e10|10000000001|2|10000000001|10000000001|2|error|2|error|
 |0x42|67|1|1|67|67|error|67|67|
