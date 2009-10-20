@@ -1,4 +1,8 @@
-For each of the strings, convert it to an integer and add 1.
+---
+layout: post
+title: Results of string->int conversions
+---
+For each of the strings representing an integer, convert it to an integer and add 1.
 
 |_string|_expected|_test.rb|_test.pl|_test.lua|_test.c|_test.py|_testb0.rb|_testb0.py|
 |2|3|3|3|3|3|3|3|3|
