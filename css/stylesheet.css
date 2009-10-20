@@ -15,13 +15,13 @@ a[href] {
 #wrapper { /* IE workaround */
 	margin: 0 auto;
 	padding: 0;
-	width: 750px;
+	width: 100%;
 }
 html>body #wrapper {
 	margin: 0 auto;
 	padding: 0;
 	width: auto;
-	max-width: 750px;
+	max-width: 100%;
 }
 
 #header {
