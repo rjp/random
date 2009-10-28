@@ -39,6 +39,10 @@ loop do
         :min_upload_date => last_upload
     )
 
+    if list.size == 0 then
+        break
+    end
+
     # queue all the photos we've just got from flickr
     $dbh.transaction do 
         list.each do |photo|
@@ -52,5 +56,4 @@ loop do
     end
 
     page = page + 1
-    exit
 end
