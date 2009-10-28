@@ -17,72 +17,40 @@ base = 0
 page = 1
 pagesize = 500
 
-puts "fetching #{info.photos.count} photos"
+# CREATE TABLE queue (id char(12) primary key, upload timestamp, got_info timestamp, got_exif timestamp);
 
-# CREATE TABLE exif (id char(12), tag varchar(1024), value varchar(1024), raw varchar(1024), myclean varchar(1024), primary key(id, tag));
-# CREATE TABLE photos (id char(12) primary key, secret char(12), title varchar(1024) , taken timestamp, last_update timestamp, ispublic int, isfriend int, isfamily int, upload timestamp);
+last_photo = $dbh.select_one('select max(upload) from queue')
+last_upload = last_photo[0].nil? ? 0 : Time.parse(last_photo[0]).to_i
 
-sth = $dbh.prepare("insert into photos values (?,?,?,?,NULL,?,?,?,?)")
-inserttag = $dbh.prepare("insert into exif values (?,?,?,?,?)")
+if last_upload > 0 then
+    puts "fetching since #{Time.at(last_upload)}"
+end
 
-#<FlickRaw::Response:0xb714e800 @isfriend=0, @isfamily=0, @farm=3, @title="Three A's", @secret="1860920ee1", @owner="12708857@N00", @server="2497", @datetaken="2009-10-21 13:15:28", @datetakengranularity="0", @ispublic=1, @lastupdate="1256135177", @id="4031474351">
+# ignore primary key conflicts, we're guaranteed to get them
+queue = $dbh.prepare("insert or ignore into queue values (?,?,NULL,NULL)")
 
-# cache which photo ids already have EXIF to reduce API calls
-phoots = {}
-exif_seen = $dbh.select_all('select distinct id from exif')
-exif_seen.each { |i|
-    phoots[i[0]] = 1
-}
-
-limit = info.photos.count.to_i
-
-while base < limit do
-    list = flickr.people.getPublicPhotos(
+loop do
+    list = flickr.photos.search(
 	    :user_id => user,
 	    :per_page => pagesize,
 	    :page => page,
-        :extras => 'date_taken,last_update,date_upload'
-    )  
-    $dbh.transaction do
-	    list.each_with_index do |photo,j|
-            next unless phoots[photo.id].nil?
+        :extras => 'date_upload',
+        :sort => 'date-posted-asc',
+        :min_upload_date => last_upload
+    )
 
-            puts "inserting photo #{photo.id}, #{base+j}"
-	        sth.execute(
-                photo.id, photo.secret, photo.title, photo.datetaken,
-                photo.ispublic, photo.isfriend, photo.isfamily,
-                photo.dateupload
-            )
-# #<FlickRaw::Response:0xb7129654 @label="File Size", @tagspace="File", @raw="316 kB", @tag="FileSize", @tagspaceid=0>
-# #<FlickRaw::Response:0xb7129424 @label="File Type", @tagspace="File", @raw="JPEG", @tag="FileType", @tagspaceid=0>,
-            exiftags = flickr.photos.getExif(:photo_id => photo.id)
-            cached = Hash.new { |h,k| h[k]=Array.new }
-            exiftags.exif.each do |tag|
-                clean = tag.respond_to?('clean') ? tag.clean : nil
-# puts "id=#{photo.id} tag=#{tag.label} raw=#{tag.raw} clean=#{clean}"
-                cached[tag.label].push [tag.raw, clean]
-            end
-            if cached.keys.nil? then
-                cached['NoExif'] = ['NoExif']
-            end
-            begin
-	            cached.keys.each do |t|
-	                raw = cached[t].map{|i|i[0]}.compact.uniq.join(';;')
-	                clean = cached[t].map{|i|i[1]}.compact.uniq.join(';;')
-	                nc = clean
-	                if t == 'Aperture' then
-	                    v = clean.gsub('f/','').to_f
-	                    nc = sprintf((v > 9 ? 'f/%d' : 'f/%.1f'), v)
-	                end
-                    inserttag.execute(photo.id, t, clean, raw, nc)
-	            end
-	            sleep 1
-            rescue SQLite3::SQLException
-                next
-            end
-	    end
+    # queue all the photos we've just got from flickr
+    $dbh.transaction do 
+        list.each do |photo|
+        # <photo id="4862693" owner="12708857@N00" secret="982c7066df" 
+        #  server="3" farm="1" title="Early sunrise" ispublic="1" 
+        #  isfriend="0" isfamily="0" dateupload="1108498665"/>
+            id = photo.id
+            upload = Time.at(photo.dateupload.to_i)
+            queue.execute(id, upload)
+        end
     end
-    base = base + pagesize
+
     page = page + 1
-    sleep 30
+    exit
 end
