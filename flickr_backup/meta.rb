@@ -55,7 +55,7 @@ loop do
         #  isfriend="0" isfamily="0" dateupload="1108498665"/>
 
             queue.execute(
-                photo.id, 
+                photo.id,
                 Time.at(photo.dateupload.to_i),
                 photo.title,
                 photo.datetaken,
@@ -74,6 +74,7 @@ end
 
 pending_exif = $dbh.select_all('select id from queue where got_exif is null')
 
+j=0
 pending_exif.each do |id|
     exiftags = flickr.photos.getExif(:photo_id => id)
 
@@ -101,4 +102,11 @@ pending_exif.each do |id|
         end
         $dbh.do('update queue set got_exif=? where id=?', Time.now, id)
     end
+
+    if j % 25 == 0 then
+        print "."
+        $stdout.flush
+        sleep 2
+    end
+    j=j+1
 end
