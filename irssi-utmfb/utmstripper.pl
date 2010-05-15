@@ -10,10 +10,9 @@ sub event_send_text {
         if ($newline =~ /utm_/) {
             $newline =~ s!from=(.*?)(&|$)!!g;
         }
-        $newline =~ s!utm_source=feedburner&!!g;
-        $newline =~ s!utm_medium=feed&!!g;
-        $newline =~ s!utm_campaign=(.*?)(&|$)!!g;
-        $newline =~ s!utm_content=(.*?)(&|$)!!g;
+        foreach my $i (qw(source medium campaign content)) {
+            $newline =~ s!utm_${i}=(.*?)(&|$)!!g;
+        }
         $newline =~ s!\?$!!; # remove a trailing ? if we have no CGI
     }
 
