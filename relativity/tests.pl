@@ -1,0 +1,14 @@
+test1 :- write('1 '), write(ismotherinlaw(wd, ft)).
+test2 :- write('2 '), write(isdaughterinlaw(sd, ft)).
+test3 :- write('3 '), write(ismother(sd, me)).
+test4 :- write('4 '), write(isfather(me, sd)).
+test5 :- write('5 '), write(isbrother(me, bw)).
+test6 :- write('6 '), write(isgrandmother(wd, b2)).
+test7 :- write('7 '), write(isgrandfather(me, b2)).
+test8 :- write('8 '), write(issister(sd, b1)).
+test9 :- write('9 '), write(isgrandmother(sd, b1)).
+test10 :- write('10 '), write(isbrother(ft, b1)).
+test11 :- write('11 '), write(isbrother(me, b1)).
+test12 :- write('12 '), write(isaunt(wd, b1)).
+test13 :- write('13 '), write(isgrandfather(ft, b1)).
+test14 :- write('14 '), write(isgrandfather(me, me)).
