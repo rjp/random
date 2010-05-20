@@ -52,8 +52,12 @@ isgrandmother(X,Y) :- ischild(Z,X), ischild(Y,Z), female(X).
 isbrother(X,Y) :- male(X), ischild(X,Z), ischild(Y,Z), X \== Y.
 issister(X,Y) :- female(X), ischild(X,Z), ischild(Y,Z), X \== Y.
 
-isaunt(X,Y) :- female(X), issister(X,Z), ischild(Y,Z).
 isuncle(X,Y) :- male(X), isbrother(X,Z), ischild(Y,Z).
+% aunt = parent's sister
+isaunt(X,Y) :- female(X), issister(X,Z), ischild(Y,Z).
+% aunt = uncle's spouse
+isaunt(X,Y) :- female(X), isuncle(Z,Y), ismarried(X,Z).
+
 
 % brotherinlaw B is married to Ps sister
 isbrotherinlaw(B,P) :- male(B), issister(Z,P), ismarried(B,Z).
