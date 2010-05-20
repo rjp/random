@@ -1,28 +1,28 @@
 % first things first, the gender of the cast players
-male(dad).
-male(man).
-male(boy).
-male(boytwo).
+male(ft).
+male(me).
+male(b2).
+male(b1).
 female(mum).
-female(widow).
-female(stepdot).
+female(wd).
+female(sd).
 
-% I married the widow
-married(man, widow).
+% I married the wd
+married(me, wd).
 % my father ...
-father(dad, man).
+father(ft, me).
 % ... married the stepdaughter
-daughter(stepdot, widow).
-married(dad, stepdot).
+daughter(sd, wd).
+married(ft, sd).
 
 % stepdaughter has a boy
-son(boy,stepdot).
+son(b2,sd).
 
 % my wife also has a boy
-son(boytwo,widow).
+son(b1,wd).
 %
 % implicit in the story
-mother(mum, man).
+mother(mum, me).
 
 % direct child-parent relationships
 isdirectchild(Child,Parent) :- son(Child,Parent).
