@@ -4,9 +4,11 @@ require 'flickraw'
 require 'yaml'
 require 'haml'
 require 'open-uri'
-require 'hpricot'
+require 'nokogiri'
 require 'dbi'
 require 'digest'
+
+QUOTE_URL = 'http://www.quotationspage.com/random.php3'
 
 set :port, 4569
 
@@ -100,7 +102,7 @@ end
 def get_wikipedia
     a = nil
     1.upto(5) do
-        a = Hpricot(open("http://en.wikipedia.org/wiki/Special:Random", "User-Agent" => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.1) Gecko/2008070206 Firefox/3.0.1"))
+        a = Nokogiri(open("http://en.wikipedia.org/wiki/Special:Random", "User-Agent" => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.1) Gecko/2008070206 Firefox/3.0.1"))
         if a.at("a[@href*='Living_people']").nil? then
             break
         end
@@ -115,14 +117,25 @@ def get_wikipedia
 end
 
 def get_quote
-    a = Hpricot(open("http://www.quotationspage.com/random.php3"))
-    return a.search('//dt.quote')[-1].inner_text.gsub(/[^A-Za-z0-9]+$/,'').split(' ')[-5..-1].join(' ')
+    a = Nokogiri(open(QUOTE_URL))
+    quote = a.css('dt.quote')[-1]
+    link = quote.at('a')['href']
+    text = quote.inner_text.gsub(/[^A-Za-z0-9]+$/,'')
+    quote_words = text.split(' ')[-5..-1].join(' ')
+
+    resolved_link = URI(QUOTE_URL)
+    resolved_link.path = link
+
+    return quote_words, text, resolved_link
 end
 
 def get_cdmeme_parts
+    qw, q, l = get_quote()
     return {
         :flickr => get_flickr(),
         :wiki => get_wikipedia(),
-        :quote => get_quote()
+        :quote => qw,
+        :quote_full => q,
+        :quote_link => l
     }
 end

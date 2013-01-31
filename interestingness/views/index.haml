@@ -13,3 +13,7 @@
 %p
  Album title:
  %b= @cdmeme[:quote]
+%p
+ Full quote:
+ %a(href="#{@cdmeme[:quote_link]}")
+  %em= @cdmeme[:quote_full]
