@@ -10,7 +10,7 @@ sub event_send_text {
         if ($newline =~ /utm_/) {
             $newline =~ s!from=(.*?)(&|$)!!g;
         }
-        foreach my $i (qw(source medium campaign content)) {
+        foreach my $i (qw(source medium campaign content term)) {
             $newline =~ s!utm_${i}=(.*?)(&|$)!!g;
         }
         $newline =~ s!\?$!!; # remove a trailing ? if we have no CGI
