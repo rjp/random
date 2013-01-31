@@ -30,11 +30,12 @@ get '/' do
     hash = Digest::SHA1.hexdigest(parts.join('.x!|!x.'))[0..11]
     @dbh.do(
         "insert into cdmeme_base
-         (hash, flickr_id, wiki_title, wiki_link, quote_words)
-         values (?,?,?,?,?)",
+         (hash, flickr_id, wiki_title, wiki_link, quote_words, quote_full, quote_link)
+         values (?,?,?,?,?,?,?)",
         hash,
         @cdmeme[:flickr][:id], @cdmeme[:wiki][:title],
-        @cdmeme[:wiki][:link], @cdmeme[:quote]
+        @cdmeme[:wiki][:link], @cdmeme[:quote],
+        @cdmeme[:quote_full], @cdmeme[:quote_link]
     )
     @cdmeme[:hash] = hash
     haml :index
