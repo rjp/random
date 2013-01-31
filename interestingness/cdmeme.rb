@@ -88,7 +88,7 @@ def get_flickr_info(id)
 
     thumbnail = sizes.find {|x| x.label == 'Medium'}.source
 
-	return { 
+	return {
         :page => page_url, :thumb => thumbnail,
         :title => title, :user => user,
         :id => id
@@ -104,7 +104,11 @@ def get_wikipedia
     a = nil
     1.upto(5) do
         a = Nokogiri(open("http://en.wikipedia.org/wiki/Special:Random", "User-Agent" => "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.9.0.1) Gecko/2008070206 Firefox/3.0.1"))
+        # Don't use anyone in "Living People" or "[year] deaths"
         if a.at("a[@href*='Living_people']").nil? then
+            break
+        end
+        if a.at("a[@href*='deaths']").nil? then
             break
         end
         sleep 1
