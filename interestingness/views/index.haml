@@ -1,0 +1,15 @@
+%p
+ %a(href="http://cdmeme.trakr.nu/h/#{@cdmeme[:hash]}")
+  #{@cdmeme[:hash]}
+%p
+ %img(src="#{@cdmeme[:flickr][:thumb]}")
+ %br
+ %a(href="#{@cdmeme[:flickr][:page]}")
+  #{@cdmeme[:flickr][:title]} by #{@cdmeme[:flickr][:user]}
+%p
+ Band name:
+ %a(href="#{@cdmeme[:wiki][:link]}")
+  #{@cdmeme[:wiki][:title]}
+%p
+ Album title:
+ %b= @cdmeme[:quote]
