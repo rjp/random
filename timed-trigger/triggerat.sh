@@ -1,4 +1,4 @@
-#! bash
+#! /usr/bin/env bash
 
 # This is probably better in an ENV than an argument
 IV=${1:-20}
